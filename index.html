@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Skakmatchningssystem</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #333; }
+    input, select, button { margin: 5px; padding: 5px; }
+    ul { list-style-type: none; padding-left: 0; }
+    li { margin: 3px 0; }
+    table { border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; }
+    th { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>♟️ Skakmatchningssystem</h1>
+
+  <h2>Registrer resultat</h2>
+  <input type="text" id="playerName" placeholder="Navn">
+  <select id="playerResult">
+    <option value="vinder">Vinder</option>
+    <option value="taber">Taber</option>
+  </select>
+  <button onclick="registerPlayer()">Indsend</button>
+
+  <h2>Ventende spillere</h2>
+  <ul id="waitingList"></ul>
+
+  <h2>Foreslåede nye kampe</h2>
+  <ul id="matchSuggestions"></ul>
+
+  <h2>Pointtavle</h2>
+  <table id="scoreTable">
+    <thead>
+      <tr><th>Spiller</th><th>Sejre</th><th>Nederlag</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const waitingPlayers = [];
+    const matchSuggestions = [];
+    const scoreBoard = {};
+
+    function registerPlayer() {
+      const name = document.getElementById("playerName").value.trim();
+      const result = document.getElementById("playerResult").value;
+      if (!name) return;
+
+      waitingPlayers.push({ name, result });
+
+      // Update score board
+      if (!scoreBoard[name]) {
+        scoreBoard[name] = { wins: 0, losses: 0 };
+      }
+      if (result === "vinder") {
+        scoreBoard[name].wins += 1;
+      } else {
+        scoreBoard[name].losses += 1;
+      }
+
+      document.getElementById("playerName").value = "";
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const waitingList = document.getElementById("waitingList");
+      const matchList = document.getElementById("matchSuggestions");
+      const scoreTableBody = document.querySelector("#scoreTable tbody");
+
+      waitingList.innerHTML = "";
+      matchList.innerHTML = "";
+      scoreTableBody.innerHTML = "";
+
+      const grouped = { vinder: [], taber: [] };
+      waitingPlayers.forEach(p => grouped[p.result].push(p));
+
+      // Match players with same result
+      ["vinder", "taber"].forEach(result => {
+        while (grouped[result].length >= 2) {
+          const p1 = grouped[result].shift();
+          const p2 = grouped[result].shift();
+          matchSuggestions.push(`${p1.name} vs ${p2.name}`);
+        }
+      });
+
+      // Update waiting list
+      grouped.vinder.concat(grouped.taber).forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = `${p.name} - ${p.result}`;
+        waitingList.appendChild(li);
+      });
+
+      // Update match suggestions
+      matchSuggestions.forEach(match => {
+        const li = document.createElement("li");
+        li.textContent = match;
+        matchList.appendChild(li);
+      });
+
+      // Update score table
+      Object.keys(scoreBoard).forEach(name => {
+        const row = document.createElement("tr");
+        const wins = scoreBoard[name].wins;
+        const losses = scoreBoard[name].losses;
+        row.innerHTML = `<td>${name}</td><td>${wins}</td><td>${losses}</td>`;
+        scoreTableBody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
