@@ -1,11 +1,10 @@
-
 {
   "name": "HPR SKAK ELO",
   "short_name": "HPR ELO",
   "description": "Rangliste og ELO-beregner for HPR skak",
   "lang": "da",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
