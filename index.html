@@ -8,6 +8,12 @@
   <!-- PWA / Ikoner -->
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <!-- iOS / Apple-safari PWA meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HPR SKAK ELO" />
+  <!-- Apple touch icon (tilføj en tilsvarende fil i dit repo, fx apple-touch-icon.png eller juster navnet) -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="theme-color" content="#0d1117" />
 
   <style>
@@ -55,6 +61,15 @@
 
     .result { text-align: right; font-variant-numeric: tabular-nums; }
 
+    .ios-instruction {
+      display:none;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
     @media (max-width: 720px) {
       .calc { grid-template-columns: repeat(6, 1fr); }
       .hide-sm { display:none; }
@@ -67,6 +82,10 @@
       <h1>HPR SKAK ELO</h1>
       <div class="controls">
         <button id="reload">Opdater listen</button>
+        <!-- Install-knap; skjult indtil beforeinstallprompt -->
+        <button id="installBtn" style="display:none;">Installér app</button>
+        <!-- iOS instruktion (vises kun på iOS hvis ikke standalone) -->
+        <div id="iosInfo" class="ios-instruction" role="status" aria-live="polite"></div>
       </div>
     </div>
   </header>
@@ -187,11 +206,55 @@
     });
 
     loadPlayers();
+
+    // Service worker registration med eksplicit scope (forudsæt service-worker.js i roden)
     if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(() => {
-    console.log('Service worker registered');
-  }).catch(err => console.error('SW registration failed:', err));
-}
+      navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then(() => {
+        console.log('Service worker registered');
+      }).catch(err => console.error('SW registration failed:', err));
+    }
+
+    // PWA install flow (Android / Chrome)
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    const iosInfo = document.getElementById('iosInfo');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Forhindre browserens automatiske prompt — vi viser vores egen knap
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      console.log('User choice', choiceResult.outcome);
+      // Hvis brugeren valgte at installere, skjul knappen
+      installBtn.style.display = 'none';
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('App installed');
+      installBtn.style.display = 'none';
+    });
+
+    // iOS: vis simple instruktion hvis bruger er på iOS og ikke i standalone mode
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+    function isInStandaloneMode() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    }
+    if (isIos() && !isInStandaloneMode()) {
+      // Vis en kort instruktion (kan styles/ændres)
+      iosInfo.style.display = 'inline-block';
+      iosInfo.innerHTML = 'For at installere: tryk på Del-knappen i Safari og vælg "Føj til hjemmeskærm".';
+      // skjul igen efter nogle sekunder
+      setTimeout(() => { iosInfo.style.display = 'none'; }, 10000);
+    }
   </script>
 </body>
 </html>
