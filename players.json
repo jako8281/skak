@@ -1,4 +1,3 @@
-
 [
   { "name": "5A Anton",      "rating": 1000 },
   { "name": "5A Celina",     "rating": 1000 },
@@ -45,4 +44,3 @@
   { "name": "6B Villum",         "rating": 1000 },
   { "name": "6B William",        "rating": 1000 }
 ]
-``
