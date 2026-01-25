@@ -1,115 +1,178 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8">
-  <title>Skakmatchningssystem</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>5.A Skak ELO</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1, h2 { color: #333; }
-    input, select, button { margin: 5px; padding: 5px; }
-    ul { list-style-type: none; padding-left: 0; }
-    li { margin: 3px 0; }
-    table { border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; }
-    th { background-color: #f0f0f0; }
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --text: #c9d1d9;
+      --muted: #8b949e;
+      --accent: #2f81f7;
+      --good: #3fb950;
+      --warn: #f0883e;
+      --bad:  #f85149;
+      --border: #30363d;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    header { padding: 24px 16px; background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+    header .wrap { max-width: 900px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+    h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.2px; }
+    main { max-width: 900px; margin: 16px auto 96px auto; padding: 0 16px; }
+
+    .card { background: var(--panel); border:1px solid var(--border); border-radius: 10px; }
+    .card h2 { margin: 0; padding: 14px 16px; border-bottom:1px solid var(--border); font-size: 16px; font-weight: 600; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 500; font-size: 14px; }
+    tbody td { padding: 10px 12px; border-top:1px solid var(--border); }
+    tbody tr:hover { background: #0b1320; }
+    .rank { width: 64px; color: var(--muted); }
+    .name { font-weight: 600; }
+    .elo { font-variant-numeric: tabular-nums; text-align: right; }
+
+    .controls { display:flex; gap:8px; align-items:center; }
+    button, select, input { color: var(--text); background: #0b1220; border:1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+    button { background: var(--accent); border-color: #1f6feb; cursor: pointer; }
+    button:hover { filter: brightness(1.05); }
+
+    .footerbar { position: fixed; left:0; right:0; bottom:0; background: rgba(22,27,34,0.98); border-top: 1px solid var(--border); padding: 10px 12px; z-index: 10; }
+    .footerwrap { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap:8px; }
+
+    .calc { display: grid; grid-template-columns: repeat(12, 1fr); gap:8px; align-items: center; }
+    .calc label { color: var(--muted); font-size: 13px; }
+    .calc .group { display:flex; flex-direction: column; gap:4px; }
+    .calc input[type="number"] { width: 100%; }
+
+    .result { text-align: right; font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 720px) {
+      .calc { grid-template-columns: repeat(6, 1fr); }
+      .hide-sm { display:none; }
+    }
   </style>
 </head>
 <body>
-  <h1>♟️ Skakmatchningssystem</h1>
+  <header>
+    <div class="wrap">
+      <h1>5.A Skak ELO</h1>
+      <div class="controls">
+        <button id="reload">Opdater listen</button>
+      </div>
+    </div>
+  </header>
 
-  <h2>Registrer resultat</h2>
-  <input type="text" id="playerName" placeholder="Navn">
-  <select id="playerResult">
-    <option value="vinder">Vinder</option>
-    <option value="taber">Taber</option>
-  </select>
-  <button onclick="registerPlayer()">Indsend</button>
+  <main>
+    <section class="card" aria-labelledby="liste-h2">
+      <h2 id="liste-h2">Spillere sorteret efter rating</h2>
+      <div style="overflow:auto">
+        <table id="players">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Navn</th>
+              <th class="elo">Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" style="padding:18px; color: var(--muted);">Henter data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-  <h2>Ventende spillere</h2>
-  <ul id="waitingList"></ul>
-
-  <h2>Foreslåede nye kampe</h2>
-  <ul id="matchSuggestions"></ul>
-
-  <h2>Pointtavle</h2>
-  <table id="scoreTable">
-    <thead>
-      <tr><th>Spiller</th><th>Sejre</th><th>Nederlag</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <footer class="footerbar" aria-label="ELO-beregner">
+    <div class="footerwrap">
+      <div class="calc">
+        <div class="group" style="grid-column: span 2;">
+          <label for="ra">Rating A</label>
+          <input id="ra" type="number" value="1000" min="0" step="1" />
+        </div>
+        <div class="group" style="grid-column: span 2;">
+          <label for="rb">Rating B</label>
+          <input id="rb" type="number" value="1000" min="0" step="1" />
+        </div>
+        <div class="group" style="grid-column: span 2;">
+          <label for="result">Resultat for A</label>
+          <select id="result">
+            <option value="1">Sejr</option>
+            <option value="0.5">Remis</option>
+            <option value="0">Nederlag</option>
+          </select>
+        </div>
+        <div class="group hide-sm" style="grid-column: span 2;">
+          <label for="k">K-faktor</label>
+          <input id="k" type="number" value="32" min="1" step="1" disabled />
+        </div>
+        <div class="group" style="grid-column: span 2; align-self:end;">
+          <button id="calc">Beregn ny ELO</button>
+        </div>
+        <div class="group result" style="grid-column: span 2;">
+          <label>Nye ratings</label>
+          <div id="out">A: 1000, B: 1000</div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    const waitingPlayers = [];
-    const matchSuggestions = [];
-    const scoreBoard = {};
+    const TBL = document.querySelector('#players tbody');
+    const reloadBtn = document.getElementById('reload');
 
-    function registerPlayer() {
-      const name = document.getElementById("playerName").value.trim();
-      const result = document.getElementById("playerResult").value;
-      if (!name) return;
-
-      waitingPlayers.push({ name, result });
-
-      // Update score board
-      if (!scoreBoard[name]) {
-        scoreBoard[name] = { wins: 0, losses: 0 };
+    async function loadPlayers() {
+      try {
+        const res = await fetch('players.json?cache=' + Date.now());
+        if (!res.ok) throw new Error('Kunne ikke hente players.json');
+        const data = await res.json();
+        data.sort((a,b) => (b.rating||0) - (a.rating||0));
+        renderTable(data);
+      } catch (e) {
+        TBL.innerHTML = `<tr><td colspan="3" style="padding:18px; color:#f85149;">${e.message}</td></tr>`;
       }
-      if (result === "vinder") {
-        scoreBoard[name].wins += 1;
-      } else {
-        scoreBoard[name].losses += 1;
-      }
-
-      document.getElementById("playerName").value = "";
-      updateDisplay();
     }
 
-    function updateDisplay() {
-      const waitingList = document.getElementById("waitingList");
-      const matchList = document.getElementById("matchSuggestions");
-      const scoreTableBody = document.querySelector("#scoreTable tbody");
-
-      waitingList.innerHTML = "";
-      matchList.innerHTML = "";
-      scoreTableBody.innerHTML = "";
-
-      const grouped = { vinder: [], taber: [] };
-      waitingPlayers.forEach(p => grouped[p.result].push(p));
-
-      // Match players with same result
-      ["vinder", "taber"].forEach(result => {
-        while (grouped[result].length >= 2) {
-          const p1 = grouped[result].shift();
-          const p2 = grouped[result].shift();
-          matchSuggestions.push(`${p1.name} vs ${p2.name}`);
-        }
-      });
-
-      // Update waiting list
-      grouped.vinder.concat(grouped.taber).forEach(p => {
-        const li = document.createElement("li");
-        li.textContent = `${p.name} - ${p.result}`;
-        waitingList.appendChild(li);
-      });
-
-      // Update match suggestions
-      matchSuggestions.forEach(match => {
-        const li = document.createElement("li");
-        li.textContent = match;
-        matchList.appendChild(li);
-      });
-
-      // Update score table
-      Object.keys(scoreBoard).forEach(name => {
-        const row = document.createElement("tr");
-        const wins = scoreBoard[name].wins;
-        const losses = scoreBoard[name].losses;
-        row.innerHTML = `<td>${name}</td><td>${wins}</td><td>${losses}</td>`;
-        scoreTableBody.appendChild(row);
+    function renderTable(rows) {
+      TBL.innerHTML = '';
+      rows.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i+1}</td>
+          <td class="name">${escapeHtml(p.name)}</td>
+          <td class="elo">${Math.round(p.rating)}</td>
+        `;
+        TBL.appendChild(tr);
       });
     }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+    }
+
+    reloadBtn.addEventListener('click', loadPlayers);
+
+    // ELO kalkulator
+    const ra = document.getElementById('ra');
+    const rb = document.getElementById('rb');
+    const resSel = document.getElementById('result');
+    const out = document.getElementById('out');
+    document.getElementById('calc').addEventListener('click', () => {
+      const RA = parseFloat(ra.value || '0');
+      const RB = parseFloat(rb.value || '0');
+      const SA = parseFloat(resSel.value);
+      const K = 32; // fast
+      const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
+      const EB = 1 - EA;
+      const newRA = RA + K * (SA - EA);
+      const newRB = RB + K * ((1-SA) - EB);
+      out.textContent = `A: ${newRA.toFixed(1)}, B: ${newRB.toFixed(1)}`;
+    });
+
+    loadPlayers();
   </script>
 </body>
 </html>
