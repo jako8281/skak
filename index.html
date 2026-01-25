@@ -50,8 +50,6 @@
 
     .result { text-align: right; font-variant-numeric: tabular-nums; }
 
-    .note { color: var(--muted); font-size: 13px; padding: 12px 16px; }
-
     @media (max-width: 720px) {
       .calc { grid-template-columns: repeat(6, 1fr); }
       .hide-sm { display:none; }
@@ -71,6 +69,7 @@
   <main>
     <section class="card" aria-labelledby="liste-h2">
       <h2 id="liste-h2">Spillere sorteret efter rating</h2>
+      <!-- Note-teksten er fjernet som ønsket -->
       <div style="overflow:auto">
         <table id="players">
           <thead>
@@ -157,7 +156,7 @@
 
     reloadBtn.addEventListener('click', loadPlayers);
 
-    // ELO-kalkulator (K=32) – nu AFRUNDET TIL 0 DECIMALER
+    // ELO-kalkulator (K=32) – afrundet til HELTAL
     const ra = document.getElementById('ra');
     const rb = document.getElementById('rb');
     const resSel = document.getElementById('result');
@@ -166,13 +165,19 @@
     document.getElementById('calc').addEventListener('click', () => {
       const RA = parseFloat(ra.value || '0');
       const RB = parseFloat(rb.value || '0');
-           const K = 32;
-      const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
-      const EB = 1 - EA;
-      const newRA = RA + K * (SA - EA);
-      const newRB = RB + K * ((1-SA) - EB);
+      const SA = parseFloat(resSel.value);
+      const K = 32; // fast
 
-      // AFRUND TIL HELTAL
+      // Sikring mod NaN (hvis input er tomt/mærkeligt)
+      const _RA = isNaN(RA) ? 0 : RA;
+      const _RB = isNaN(RB) ? 0 : RB;
+      const _SA = (SA === 1 || SA === 0.5 || SA === 0) ? SA : 0;
+
+      const EA = 1/(1 + Math.pow(10, (_RB-_RA)/400));
+      const EB = 1 - EA;
+      const newRA = _RA + K * (_SA - EA);
+      const newRB = _RB + K * ((1-_SA) - EB);
+
       out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
     });
 
