@@ -1,90 +1,25 @@
+
 [
-  {
-    "name": "Anton",
-    "rating": 1000
-  },
-  {
-    "name": "Enzo",
-    "rating": 1001
-  },
-  {
-    "name": "Celina",
-    "rating": 999
-  },
-  {
-    "name": "Kira",
-    "rating": 998
-  },
-  {
-    "name": "Ella B",
-    "rating": 1002
-  },
-  {
-    "name": "Ella E",
-    "rating": 1003
-  },
-  {
-    "name": "Elliot",
-    "rating": 997
-  },
-  {
-    "name": "Freja",
-    "rating": 996
-  },
-  {
-    "name": "Freya",
-    "rating": 995
-  },
-  {
-    "name": "Ida Marie",
-    "rating": 1004
-  },
-  {
-    "name": "Johannes",
-    "rating": 1005
-  },
-  {
-    "name": "Konrad",
-    "rating": 1006
-  },
-  {
-    "name": "Lili",
-    "rating": 994
-  },
-  {
-    "name": "Lyon",
-    "rating": 993
-  },
-  {
-    "name": "Margrethe",
-    "rating": 992
-  },
-  {
-    "name": "Nanna",
-    "rating": 991
-  },
-  {
-    "name": "Nicoline",
-    "rating": 1007
-  },
-  {
-    "name": "Nohr",
-    "rating": 1008
-  },
-  {
-    "name": "Roberta",
-    "rating": 1009
-  },
-  {
-    "name": "Sander",
-    "rating": 1010
-  },
-  {
-    "name": "Sarah",
-    "rating": 990
-  },
-  {
-    "name": "Walter",
-    "rating": 899
-  }
+  { "name": "Anton", "rating": 1000 },
+  { "name": "Enzo", "rating": 1017 },
+  { "name": "Celina", "rating": 999 },
+  { "name": "Kira", "rating": 982 },
+  { "name": "Ella B", "rating": 1002 },
+  { "name": "Ella E", "rating": 1003 },
+  { "name": "Elliot", "rating": 997 },
+  { "name": "Freja", "rating": 996 },
+  { "name": "Freya", "rating": 995 },
+  { "name": "Ida Marie", "rating": 1004 },
+  { "name": "Johannes", "rating": 984 },
+  { "name": "Konrad", "rating": 1006 },
+  { "name": "Lili", "rating": 994 },
+  { "name": "Lyon", "rating": 993 },
+  { "name": "Margrethe", "rating": 992 },
+  { "name": "Nanna", "rating": 991 },
+  { "name": "Nicoline", "rating": 1007 },
+  { "name": "Nohr", "rating": 992 },
+  { "name": "Roberta", "rating": 1009 },
+  { "name": "Sander", "rating": 1010 },
+  { "name": "Sarah", "rating": 1006 },
+  { "name": "Walter", "rating": 920 }
 ]
