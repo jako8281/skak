@@ -5,15 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HPR SKAK ELO</title>
-
-  <!-- PWA: Manifest + tema -->
-  <link rel="manifest" href="manifest.webe-color" content="#0d1117" />
-
-  <!-- iOS / Safari: “Add to Home Screen” og fullscreen -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="HPR SKAK ELO">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="icons{
+  <style>
+    :root {
       --bg: #0d1117;
       --panel: #161b22;
       --text: #c9d1d9;
@@ -57,6 +50,8 @@
 
     .result { text-align: right; font-variant-numeric: tabular-nums; }
 
+    .note { color: var(--muted); font-size: 13px; padding: 12px 16px; }
+
     @media (max-width: 720px) {
       .calc { grid-template-columns: repeat(6, 1fr); }
       .hide-sm { display:none; }
@@ -69,8 +64,6 @@
       <h1>HPR SKAK ELO</h1>
       <div class="controls">
         <button id="reload">Opdater listen</button>
-        <!-- (Valgfri) Vis “Installér”-knap på desktop, hvis du vil:
-        <button id="install" style="display:none;">Installér app</button> -->
       </div>
     </div>
   </header>
@@ -78,7 +71,7 @@
   <main>
     <section class="card" aria-labelledby="liste-h2">
       <h2 id="liste-h2">Spillere sorteret efter rating</h2>
-      <!-- Note-teksten er fjernet som ønsket -->
+      <div class="note">Data hentes fra filen players.json i samme mappe. Opdater players.json for at ændre listen.</div>
       <div style="overflow:auto">
         <table id="players">
           <thead>
@@ -142,7 +135,7 @@
         data.sort((a,b) => (b.rating||0) - (a.rating||0));
         renderTable(data);
       } catch (e) {
-        TBL.innerHTML = `<tr><td colspan="3" style="padding:18px; color:#f85149;">${e.message}</td></tr>`;
+        TBL.innerHTML = `<tr><td colspan=\"3\" style=\"padding:18px; color:#f85149;\">${e.message}</td></tr>`;
       }
     }
 
@@ -151,26 +144,25 @@
       rows.forEach((p, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="rank">${i+1}</td>
-          <td class="name">${escapeHtml(p.name)}</td>
-          <td class="elo">${Math.round(p.rating)}</td>
+          <td class=\"rank\">${i+1}</td>
+          <td class=\"name\">${escapeHtml(p.name)}</td>
+          <td class=\"elo\">${Math.round(p.rating)}</td>
         `;
         TBL.appendChild(tr);
       });
     }
 
     function escapeHtml(s) {
-      return String(s).replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
     }
 
     reloadBtn.addEventListener('click', loadPlayers);
 
-    // ELO-kalkulator – afrundet til 0 decimaler
+    // ELO-kalkulator (K=32)
     const ra = document.getElementById('ra');
     const rb = document.getElementById('rb');
     const resSel = document.getElementById('result');
     const out = document.getElementById('out');
-
     document.getElementById('calc').addEventListener('click', () => {
       const RA = parseFloat(ra.value || '0');
       const RB = parseFloat(rb.value || '0');
@@ -180,34 +172,8 @@
       const EB = 1 - EA;
       const newRA = RA + K * (SA - EA);
       const newRB = RB + K * ((1-SA) - EB);
-      out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
+      out.textContent = `A: ${newRA.toFixed(1)}, B: ${newRB.toFixed(1)}`;
     });
-
-    // --- PWA: registrér service worker ---
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .catch(err => console.error('SW fejl:', err));
-      });
-    }
-
-    // (Valgfrit) Håndter "beforeinstallprompt" hvis du vil vise egen knap:
-    /*
-    let deferredPrompt = null;
-    const installBtn = document.getElementById('install');
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (installBtn) installBtn.style.display = 'inline-block';
-    });
-    installBtn?.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
-    */
 
     loadPlayers();
   </script>
