@@ -71,7 +71,6 @@
   <main>
     <section class="card" aria-labelledby="liste-h2">
       <h2 id="liste-h2">Spillere sorteret efter rating</h2>
-      <div class="note">Data hentes fra filen players.json i samme mappe. Opdater players.json for at ændre listen.</div>
       <div style="overflow:auto">
         <table id="players">
           <thead>
@@ -135,7 +134,7 @@
         data.sort((a,b) => (b.rating||0) - (a.rating||0));
         renderTable(data);
       } catch (e) {
-        TBL.innerHTML = `<tr><td colspan=\"3\" style=\"padding:18px; color:#f85149;\">${e.message}</td></tr>`;
+        TBL.innerHTML = `<tr><td colspan="3" style="padding:18px; color:#f85149;">${e.message}</td></tr>`;
       }
     }
 
@@ -144,35 +143,37 @@
       rows.forEach((p, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class=\"rank\">${i+1}</td>
-          <td class=\"name\">${escapeHtml(p.name)}</td>
-          <td class=\"elo\">${Math.round(p.rating)}</td>
+          <td class="rank">${i+1}</td>
+          <td class="name">${escapeHtml(p.name)}</td>
+          <td class="elo">${Math.round(p.rating)}</td>
         `;
         TBL.appendChild(tr);
       });
     }
 
     function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+      return String(s).replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
     reloadBtn.addEventListener('click', loadPlayers);
 
-    // ELO-kalkulator (K=32)
+    // ELO-kalkulator (K=32) – nu AFRUNDET TIL 0 DECIMALER
     const ra = document.getElementById('ra');
     const rb = document.getElementById('rb');
     const resSel = document.getElementById('result');
     const out = document.getElementById('out');
+
     document.getElementById('calc').addEventListener('click', () => {
       const RA = parseFloat(ra.value || '0');
       const RB = parseFloat(rb.value || '0');
-      const SA = parseFloat(resSel.value);
-      const K = 32; // fast
+           const K = 32;
       const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
       const EB = 1 - EA;
       const newRA = RA + K * (SA - EA);
       const newRB = RB + K * ((1-SA) - EB);
-      out.textContent = `A: ${newRA.toFixed(1)}, B: ${newRB.toFixed(1)}`;
+
+      // AFRUND TIL HELTAL
+      out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
     });
 
     loadPlayers();
