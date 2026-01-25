@@ -208,11 +208,12 @@
     loadPlayers();
 
     // Service worker registration med eksplicit scope (forudsæt service-worker.js i roden)
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then(() => {
-        console.log('Service worker registered');
-      }).catch(err => console.error('SW registration failed:', err));
-    }
+if ('serviceWorker' in navigator) {
+  // Brug relativ sti (ingen ledende slash) så det virker både i / og i /skak/
+  navigator.serviceWorker.register('service-worker.js').then(() => {
+    console.log('Service worker registered');
+  }).catch(err => console.error('SW registration failed:', err));
+}
 
     // PWA install flow (Android / Chrome)
     let deferredPrompt = null;
