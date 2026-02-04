@@ -5,16 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HPR SKAK ELO</title>
 
-  <!-- PWA / Ikoner -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
-  <!-- iOS / Apple-safari PWA meta tags -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifestcon" type="image/png" sizes="32x32" href="favicon-32nt="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="HPR SKAK ELO" />
-  <!-- Apple touch icon (tilføj en tilsvarende fil i dit repo, fx apple-touch-icon.png eller juster navnet) -->
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <meta name="theme-color" content="#0d1117" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png""#0d1117" />
 
   <style>
     :root {
@@ -28,9 +22,10 @@
       --bad:  #f85149;
       --border: #30363d;
     }
+
     * { box-sizing: border-box; }
     html, body { margin:0; padding:0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-    /* Ændret så indhold er venstrestillet */
+
     header .wrap { max-width: 960px; margin: 0 0; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
     h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.2px; }
     main { max-width: 960px; margin: 16px 0 96px 16px; padding: 0 16px; }
@@ -74,17 +69,47 @@
       .calc { grid-template-columns: repeat(6, 1fr); }
       .hide-sm { display:none; }
     }
+
+    /* ---------------- PRINT MODE (tilføjet) ---------------- */
+    @media print {
+      :root {
+        --bg: #ffffff;
+        --panel: #ffffff;
+        --text: #000000;
+        --muted: #333333;
+        --border: #cccccc;
+      }
+
+      html, body { background: #fff !important; color: #000 !important; }
+      .controls, .footerbar, #iosInfo { display: none !important; }
+
+      .card { background:#fff !important; border:1px solid #ccc !important; }
+      thead th { color:#000 !important; border-bottom:1px solid #000 !important; }
+      tbody td { border-top:1px solid #ddd !important; }
+      tbody tr:hover { background: transparent !important; }
+
+      @page { margin: 12mm; }
+
+      header::after {
+        content: "Udskrevet: " attr(data-print-date);
+        display: block;
+        margin-top: 4px;
+        font-size: 11pt;
+        color: #444;
+      }
+    }
+
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
       <h1>HPR SKAK ELO</h1>
+
       <div class="controls">
         <button id="reload">Opdater listen</button>
-        <!-- Install-knap; skjult indtil beforeinstallprompt -->
+        <button id="printBtn">Udskriv</button> <!-- PRINT -->
         <button id="installBtn" style="display:none;">Installér app</button>
-        <!-- iOS instruktion (vises kun på iOS hvis ikke standalone) -->
         <div id="iosInfo" class="ios-instruction" role="status" aria-live="polite"></div>
       </div>
     </div>
@@ -93,7 +118,6 @@
   <main>
     <section class="card" aria-labelledby="liste-h2">
       <h2 id="liste-h2">Spillere sorteret efter rating</h2>
-      <!-- Note-teksten er fjernet som ønsket -->
       <div style="overflow:auto">
         <table id="players">
           <thead>
@@ -180,7 +204,22 @@
 
     reloadBtn.addEventListener('click', loadPlayers);
 
-    // ELO-kalkulator (K=32) – afrundet til HELTAL
+    // PRINT SYSTEM
+    const printBtn = document.getElementById('printBtn');
+
+    function updatePrintDate() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const ts = `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      document.querySelector('header').setAttribute('data-print-date', ts);
+    }
+
+    printBtn.addEventListener('click', () => {
+      updatePrintDate();
+      window.print();
+    });
+
+    // ELO-kalkulator
     const ra = document.getElementById('ra');
     const rb = document.getElementById('rb');
     const resSel = document.getElementById('result');
@@ -190,71 +229,22 @@
       const RA = parseFloat(ra.value || '0');
       const RB = parseFloat(rb.value || '0');
       const SA = parseFloat(resSel.value);
-      const K = 32; // fast
+      const K = 32;
 
-      // Sikring mod NaN (hvis input er tomt/mærkeligt)
-      const _RA = isNaN(RA) ? 0 : RA;
-      const _RB = isNaN(RB) ? 0 : RB;
-      const _SA = (SA === 1 || SA === 0.5 || SA === 0) ? SA : 0;
-
-      const EA = 1/(1 + Math.pow(10, (_RB-_RA)/400));
+      const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
       const EB = 1 - EA;
-      const newRA = _RA + K * (_SA - EA);
-      const newRB = _RB + K * ((1-_SA) - EB);
+      const newRA = RA + K * (SA - EA);
+      const newRB = RB + K * ((1-SA) - EB);
 
       out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
     });
 
     loadPlayers();
 
-    // Service worker registration med eksplicit scope (forudsæt service-worker.js i roden)
-if ('serviceWorker' in navigator) {
-  // Brug relativ sti (ingen ledende slash) så det virker både i / og i /skak/
-  navigator.serviceWorker.register('service-worker.js').then(() => {
-    console.log('Service worker registered');
-  }).catch(err => console.error('SW registration failed:', err));
-}
-
-    // PWA install flow (Android / Chrome)
-    let deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    const iosInfo = document.getElementById('iosInfo');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      // Forhindre browserens automatiske prompt — vi viser vores egen knap
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
-      console.log('User choice', choiceResult.outcome);
-      // Hvis brugeren valgte at installere, skjul knappen
-      installBtn.style.display = 'none';
-      deferredPrompt = null;
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('App installed');
-      installBtn.style.display = 'none';
-    });
-
-    // iOS: vis simple instruktion hvis bruger er på iOS og ikke i standalone mode
-    function isIos() {
-      return /iphone|ipad|ipod/i.test(navigator.userAgent);
-    }
-    function isInStandaloneMode() {
-      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-    }
-    if (isIos() && !isInStandaloneMode()) {
-      // Vis en kort instruktion (kan styles/ændres)
-      iosInfo.style.display = 'inline-block';
-      iosInfo.innerHTML = 'For at installere: tryk på Del-knappen i Safari og vælg "Føj til hjemmeskærm".';
-      // skjul igen efter nogle sekunder
-      setTimeout(() => { iosInfo.style.display = 'none'; }, 10000);
+    // Service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('SW registered'));
     }
   </script>
 </body>
