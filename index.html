@@ -30,10 +30,10 @@
     }
     * { box-sizing: border-box; }
     html, body { margin:0; padding:0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-    header { padding: 24px 16px; background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
-    header .wrap { max-width: 960px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+    /* Ændret så indhold er venstrestillet */
+    header .wrap { max-width: 960px; margin: 0 0; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
     h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.2px; }
-    main { max-width: 960px; margin: 16px auto 96px auto; padding: 0 16px; }
+    main { max-width: 960px; margin: 16px 0 96px 16px; padding: 0 16px; }
 
     .card { background: var(--panel); border:1px solid var(--border); border-radius: 10px; }
     .card h2 { margin: 0; padding: 14px 16px; border-bottom:1px solid var(--border); font-size: 16px; font-weight: 600; }
@@ -52,7 +52,7 @@
     button:hover { filter: brightness(1.05); }
 
     .footerbar { position: fixed; left:0; right:0; bottom:0; background: rgba(22,27,34,0.98); border-top: 1px solid var(--border); padding: 10px 12px; z-index: 10; }
-    .footerwrap { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap:8px; }
+    .footerwrap { max-width: 960px; margin: 0 0; display: grid; grid-template-columns: 1fr; gap:8px; }
 
     .calc { display: grid; grid-template-columns: repeat(12, 1fr); gap:8px; align-items: center; }
     .calc label { color: var(--muted); font-size: 13px; }
