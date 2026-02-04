@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HPR SKAK ELO</title>
 
-  <!-- PWA / Ikoner -->
-  <link rel="manifest" href="manifest.webmanifest"age/png" sizes="32x32" href="favicon-32.png"me="apple-mobile-web-app-capable" content="yes" />
+  <!-- PWA / Ikoner (RETTET) -->
+  <link rel="manifestt
+  <link rel="icon" type="image/png" sizes="32x32" href=" -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="HPR SKAK ELO" />
-  <link rel="apple-touch-icon" href="theme-color" content="#0d1117" />
+  <link rel="apple-touch-icon" href="apple-touch" content="#0d1117" />
 
   <style>
     :root {
@@ -35,13 +37,13 @@
     body {
       display: flex;
       flex-direction: column;
-      align-items: center;   /* centrer hele indholdskolonnen */
+      align-items: center; /* centrer hele indholdskolonnen */
     }
 
     header .wrap,
     main,
     .footerwrap {
-      max-width: 420px;      /* smal kolonne */
+      max-width: 420px; /* smal kolonne */
       width: 100%;
       margin: 0 auto;
     }
@@ -74,3 +76,239 @@
     button { background: var(--accent); border-color: #1f6feb; cursor: pointer; }
     button:hover { filter: brightness(1.05); }
 
+    .footerbar {
+      position: fixed; left:0; right:0; bottom:0;
+      background: rgba(22,27,34,0.98); border-top: 1px solid var(--border);
+      padding: 10px 12px; z-index: 10;
+      display: flex; justify-content: center;  /* centrer footer-indholdet */
+    }
+    .footerwrap { display: grid; grid-template-columns: 1fr; gap:8px; }
+
+    .calc { display: grid; grid-template-columns: repeat(12, 1fr); gap:8px; align-items: center; }
+    .calc label { color: var(--muted); font-size: 13px; }
+    .calc .group { display:flex; flex-direction: column; gap:4px; }
+    .calc input[type="number"] { width: 100%; }
+
+    .result { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .ios-instruction {
+      display:none; background: rgba(0,0,0,0.6); color: white;
+      padding: 8px 12px; border-radius: 8px; font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      .calc { grid-template-columns: repeat(6, 1fr); }
+      .hide-sm { display:none; }
+    }
+
+    /* ---------------- PRINT MODE ---------------- */
+    @media print {
+      :root {
+        --bg: #ffffff; --panel: #ffffff; --text: #000000;
+        --muted: #333333; --border: #cccccc;
+      }
+
+      html, body { background: #fff !important; color: #000 !important; }
+      .controls, .footerbar, #iosInfo { display: none !important; }
+
+      /* Udnyt siden i print */
+      header .wrap, main { max-width: 100% !important; }
+      .card { background:#fff !important; border:1px solid #ccc !important; }
+      thead th { color:#000 !important; border-bottom:1px solid #000 !important; }
+      tbody td { border-top:1px solid #ddd !important; }
+      tbody tr:hover { background: transparent !important; }
+
+      @page { margin: 12mm; }
+
+      header::after {
+        content: "Udskrevet: " attr(data-print-date);
+        display: block; margin-top: 4px; font-size: 11pt; color: #444;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>HPR SKAK ELO</h1>
+
+      <div class="controls">
+        <button id="reload">Opdater listen</button>
+        <button id="printBtn">Udskriv</button>
+        <button id="installBtn" style="display:none;">Installér app</button>
+        <div id="iosInfo" class="ios-instruction" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="liste-h2">
+      <h2 id="liste-h2">Spillere sorteret efter rating</h2>
+      <div style="overflow:auto">
+        <table id="players">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Navn</th>
+              <th class="elo">Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" style="padding:18px; color: var(--muted);">Henter data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footerbar" aria-label="ELO-beregner">
+    <div class="footerwrap">
+      <div class="calc">
+        <div class="group" style="grid-column: span 2;">
+          <label for="ra">Rating A</label>
+          <input id="ra" type="number" value="1000" min="0" step="1" />
+        </div>
+        <div class="group" style="grid-column: span 2;">
+          <label for="rb">Rating B</label>
+          <input id="rb" type="number" value="1000" min="0" step="1" />
+        </div>
+        <div class="group" style="grid-column: span 2;">
+          <label for="result">Resultat for A</label>
+          <select id="result">
+            <option value="1">Sejr</option>
+            <option value="0.5">Remis</option>
+            <option value="0">Nederlag</option>
+          </select>
+        </div>
+        <div class="group hide-sm" style="grid-column: span 2;">
+          <label for="k">K-faktor</label>
+          <input id="k" type="number" value="32" min="1" step="1" disabled />
+        </div>
+        <div class="group" style="grid-column: span 2; align-self:end;">
+          <button id="calc">Beregn ny ELO</button>
+        </div>
+        <div class="group result" style="grid-column: span 2;">
+          <label>Nye ratings</label>
+          <div id="out">A: 1000, B: 1000</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const TBL = document.querySelector('#players tbody');
+    const reloadBtn = document.getElementById('reload');
+
+    async function loadPlayers() {
+      try {
+        const res = await fetch('players.json?cache=' + Date.now());
+        if (!res.ok) throw new Error('Kunne ikke hente players.json');
+        const data = await res.json();
+        data.sort((a,b) => (b.rating||0) - (a.rating||0));
+        renderTable(data);
+      } catch (e) {
+        TBL.innerHTML = `<tr><td colspan="3" style="padding:18px; color:#f85149;">${e.message}</td></tr>`;
+      }
+    }
+
+    function renderTable(rows) {
+      TBL.innerHTML = '';
+      rows.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i+1}</td>
+          <td class="name">${escapeHtml(p.name)}</td>
+          <td class="elo">${Math.round(p.rating)}</td>
+        `;
+        TBL.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    reloadBtn.addEventListener('click', loadPlayers);
+
+    // PRINT SYSTEM
+    const printBtn = document.getElementById('printBtn');
+
+    function updatePrintDate() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const ts = `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      document.querySelector('header').setAttribute('data-print-date', ts);
+    }
+
+    printBtn.addEventListener('click', () => {
+      updatePrintDate();
+      window.print();
+    });
+
+    // ELO-kalkulator (K=32)
+    const ra = document.getElementById('ra');
+    const rb = document.getElementById('rb');
+    const resSel = document.getElementById('result');
+    const out = document.getElementById('out');
+
+    document.getElementById('calc').addEventListener('click', () => {
+      const RA = parseFloat(ra.value || '0');
+      const RB = parseFloat(rb.value || '0');
+      const SA = parseFloat(resSel.value);
+      const K = 32;
+
+      const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
+      const EB = 1 - EA;
+      const newRA = RA + K * (SA - EA);
+      const newRB = RB + K * ((1-SA) - EB);
+
+      out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
+    });
+
+    loadPlayers();
+
+    // Service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.error('SW registration failed:', err));
+    }
+
+    // PWA install flow (Android / Chrome)
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    const iosInfo = document.getElementById('iosInfo');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      console.log('User choice', choiceResult.outcome);
+      installBtn.style.display = 'none';
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('App installed');
+      installBtn.style.display = 'none';
+    });
+
+    // iOS: vis kort instruktion hvis bruger er på iOS og ikke i standalone mode
+    function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+    function isInStandaloneMode() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    }
+    if (isIos() && !isInStandaloneMode()) {
+      iosInfo.style.display = 'inline-block';
+      iosInfo.innerHTML = 'For at installere: tryk på Del-knappen i Safari og vælg "Føj til hjemmeskærm".';
+      setTimeout(() => { iosInfo.style.display = 'none'; }, 10000);
+    }
+  </script>
+</body>
+</html>
