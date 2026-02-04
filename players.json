@@ -1,8 +1,8 @@
 [
-  { "name": "6B Neo 2/4-26",      "rating": 1031 },
-  { "name": "6B Villum 2/4-26",   "rating": 969 },
-   { "name": "6B Lucas P 2/4-26",      "rating": 1016 },
-   { "name": "6B Lucas K 2/4-26",      "rating": 984 },
-   { "name": "6B Sigge 2/4-26",      "rating": 1030 },
- { "name": "6B Tommy 2/4-26",      "rating": 970 },  
+  { "name": "6B Neo",      "rating": 1031 },
+  { "name": "6B Villum",   "rating": 969 },
+   { "name": "6B Lucas P",      "rating": 1016 },
+   { "name": "6B Lucas K",      "rating": 984 },
+   { "name": "6B Sigge",      "rating": 1030 },
+ { "name": "6B Tommy",      "rating": 970 },  
 ]
