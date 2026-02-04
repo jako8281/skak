@@ -6,12 +6,11 @@
   <title>HPR SKAK ELO</title>
 
   <!-- PWA / Ikoner (RETTET & GYLDIGT) -->
-  <link rel="manifest" href="manifest.webmanifest"age/png" sizes="32x32eta tags -->
+  <link relwebmanifest
+  <link rel="icon" type="image/png" sizes="32x32" href="ple-touch-icon.png="#0d1117" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="HPR SKAK ELO" />
-  apple-touch-icon.png
-  <meta name="theme-color" content="#0d1117" />
 
   <style>
     :root {
@@ -39,16 +38,13 @@
       flex-direction: column;
       align-items: center;
     }
-
     header .wrap {
       width: 100%;
       display: flex; gap: 12px; align-items: center; justify-content: space-between;
       padding: 12px 16px;
-      /* Centrer containeren visuelt */
       max-width: 1200px;
       margin: 0 auto;
     }
-
     h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.2px; }
 
     main {
@@ -65,8 +61,8 @@
       border:1px solid var(--border);
       border-radius: 10px;
       width: 100%;
-      max-width: 80vw;      /* <= Her sættes max bredde til ~80% af viewport */
-      margin: 0 auto;       /* centrer kortet */
+      max-width: 80vw;      /* ~80% af viewportens bredde */
+      margin: 0 auto;       /* centrer */
       overflow: hidden;
     }
 
@@ -84,10 +80,17 @@
     .name { font-weight: 600; }
     .elo { font-variant-numeric: tabular-nums; text-align: right; }
 
-    /* Sørg for at selve tabellen heller ikke bliver bredere end 80% */
-    #players {
-      max-width: 80vw;  /* matcher kortets grænse */
-      margin: 0 auto;
+    /* Match 80% princip i bunden også */
+    .footerbar {
+      position: fixed; left:0; right:0; bottom:0;
+      background: rgba(22,27,34,0.98); border-top: 1px solid var(--border);
+      padding: 10px 12px; z-index: 10;
+      display: flex; justify-content: center;
+    }
+    .footerwrap {
+      width: 100%;
+      max-width: 80vw;   /* samme bredde som listen */
+      display: grid; grid-template-columns: 1fr; gap:8px;
     }
 
     .controls { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
@@ -98,23 +101,10 @@
     button { background: var(--accent); border-color: #1f6feb; cursor: pointer; }
     button:hover { filter: brightness(1.05); }
 
-    .footerbar {
-      position: fixed; left:0; right:0; bottom:0;
-      background: rgba(22,27,34,0.98); border-top: 1px solid var(--border);
-      padding: 10px 12px; z-index: 10;
-      display: flex; justify-content: center;
-    }
-    .footerwrap {
-      width: 100%;
-      max-width: 80vw;       /* samme 80% princip i bunden */
-      display: grid; grid-template-columns: 1fr; gap:8px;
-    }
-
     .calc { display: grid; grid-template-columns: repeat(12, 1fr); gap:8px; align-items: center; }
     .calc label { color: var(--muted); font-size: 13px; }
     .calc .group { display:flex; flex-direction: column; gap:4px; }
     .calc input[type="number"] { width: 100%; }
-
     .result { text-align: right; font-variant-numeric: tabular-nums; }
 
     .ios-instruction {
@@ -157,7 +147,6 @@
   <header>
     <div class="wrap">
       <h1>HPR SKAK ELO</h1>
-
       <div class="controls">
         <button id="reload">Opdater listen</button>
         <button id="printBtn">Udskriv</button>
@@ -258,14 +247,12 @@
 
     // PRINT SYSTEM
     const printBtn = document.getElementById('printBtn');
-
     function updatePrintDate() {
       const d = new Date();
       const pad = n => String(n).padStart(2, '0');
       const ts = `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
       document.querySelector('header').setAttribute('data-print-date', ts);
     }
-
     printBtn.addEventListener('click', () => {
       updatePrintDate();
       window.print();
@@ -282,12 +269,10 @@
       const RB = parseFloat(rb.value || '0');
       const SA = parseFloat(resSel.value);
       const K = 32;
-
       const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
       const EB = 1 - EA;
       const newRA = RA + K * (SA - EA);
       const newRB = RB + K * ((1-SA) - EB);
-
       out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
     });
 
