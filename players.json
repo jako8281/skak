@@ -1,9 +1,9 @@
 [
   { "name": "6B Neo",         "rating": 1088 },
-  { "name": "6B Villum",      "rating": 1004 },
-  { "name": "6B Lucas P",     "rating": 1016 },
-  { "name": "6B Lucas K",     "rating": 1001 },
-  { "name": "6B Sigge",       "rating": 1059 },
+  { "name": "6B Villum",      "rating": 1003 },
+  { "name": "6B Lucas P",     "rating": 1002 },
+  { "name": "6B Lucas K",     "rating": 984 },
+  { "name": "6B Sigge",       "rating": 1073 },
   { "name": "6B Tommy",       "rating": 955 },
 
   { "name": "5B Callum",      "rating": 985 },
@@ -14,12 +14,12 @@
   { "name": "5A Konrad",      "rating": 999 },
 
   { "name": "6B Alma",        "rating": 985 },
-  { "name": "6B Esther",      "rating": 988 },
+  { "name": "6B Esther",      "rating": 1005 },
   { "name": "6B Sofia",       "rating": 984 },
   { "name": "6B Christoffer", "rating": 967 },
   { "name": "6B Ingeborg",    "rating": 1000 },
   { "name": "6B Agnes",       "rating": 999 },
-  { "name": "6B Noah",        "rating": 985 },
+  { "name": "6B Noah",        "rating": 986 },
   { "name": "6B Aksel",       "rating": 1001 },
   { "name": "6B Isabella",    "rating": 1016 },
   { "name": "6B Emmelie",     "rating": 968 },
