@@ -177,40 +177,6 @@
     </section>
   </main>
 
-  <footer class="footerbar" aria-label="ELO-beregner">
-    <div class="footerwrap">
-      <div class="calc">
-        <div class="group" style="grid-column: span 2;">
-          <label for="ra">Rating A</label>
-          <input id="ra" type="number" value="1000" min="0" step="1" />
-        </div>
-        <div class="group" style="grid-column: span 2;">
-          <label for="rb">Rating B</label>
-          <input id="rb" type="number" value="1000" min="0" step="1" />
-        </div>
-        <div class="group" style="grid-column: span 2;">
-          <label for="result">Resultat for A</label>
-          <select id="result">
-            <option value="1">Sejr</option>
-            <option value="0.5">Remis</option>
-            <option value="0">Nederlag</option>
-          </select>
-        </div>
-        <div class="group hide-sm" style="grid-column: span 2;">
-          <label for="k">K-faktor</label>
-          <input id="k" type="number" value="32" min="1" step="1" disabled />
-        </div>
-        <div class="group" style="grid-column: span 2; align-self:end;">
-          <button id="calc">Beregn ny ELO</button>
-        </div>
-        <div class="group result" style="grid-column: span 2;">
-          <label>Nye ratings</label>
-          <div id="out">A: 1000, B: 1000</div>
-        </div>
-      </div>
-    </div>
-  </footer>
-
   <script>
     const TBL = document.querySelector('#players tbody');
     const reloadBtn = document.getElementById('reload');
