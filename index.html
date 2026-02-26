@@ -259,24 +259,6 @@
       window.print();
     });
 
-    // ELO-kalkulator (K=32)
-    const ra = document.getElementById('ra');
-    const rb = document.getElementById('rb');
-    const resSel = document.getElementById('result');
-    const out = document.getElementById('out');
-
-    document.getElementById('calc').addEventListener('click', () => {
-      const RA = parseFloat(ra.value || '0');
-      const RB = parseFloat(rb.value || '0');
-      const SA = parseFloat(resSel.value);
-      const K = 32;
-      const EA = 1/(1 + Math.pow(10, (RB-RA)/400));
-      const EB = 1 - EA;
-      const newRA = RA + K * (SA - EA);
-      const newRB = RB + K * ((1-SA) - EB);
-      out.textContent = `A: ${Math.round(newRA)}, B: ${Math.round(newRB)}`;
-    });
-
     loadPlayers();
 
     // Service worker
