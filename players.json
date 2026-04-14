@@ -1,5 +1,5 @@
 [
-  { "name": "5A Anton", "rating": 1015 },
+  { "name": "5A Anton", "rating": 1030 },
   { "name": "5A Celina", "rating": 969 },
   { "name": "5A Ella B", "rating": 1015 },
   { "name": "5A Elliot", "rating": 1099 },
@@ -19,20 +19,17 @@
   { "name": "5A Sander", "rating": 1053 },
   { "name": "5A Sarah", "rating": 1017 },
   { "name": "5A Walter", "rating": 1046 },
-
   { "name": "5B Callum", "rating": 992 },
   { "name": "5B Clara", "rating": 1016 },
   { "name": "5B Isabella", "rating": 999 },
   { "name": "5B Malthe", "rating": 962 },
   { "name": "5B Oskar", "rating": 1006 },
-
-  { "name": "5B Emil H", "rating": 985 },
+  { "name": "5B Emil H", "rating": 970 },
   { "name": "5B Bjørn", "rating": 971 },
   { "name": "5B Mikkel", "rating": 970 },
   { "name": "5B Benjamin", "rating": 1030 },
   { "name": "5B Emil B", "rating": 967 },
   { "name": "5B Nick", "rating": 985 },
-
   { "name": "6A Agathe", "rating": 1002 },
   { "name": "6A Emilie", "rating": 984 },
   { "name": "6A Karl", "rating": 956 },
@@ -42,7 +39,6 @@
   { "name": "6A Sebastian", "rating": 1013 },
   { "name": "6A Vigga", "rating": 951 },
   { "name": "6A Villum", "rating": 963 },
-
   { "name": "6B Agnes", "rating": 981 },
   { "name": "6B Aksel", "rating": 1001 },
   { "name": "6B Alfred", "rating": 986 },
@@ -63,7 +59,6 @@
   { "name": "6B Valdemar", "rating": 997 },
   { "name": "6B Villum", "rating": 1064 },
   { "name": "6B William", "rating": 1047 },
-
   { "name": "6C Anton", "rating": 989 },
   { "name": "6C Thorbjørn", "rating": 985 }
 ]
