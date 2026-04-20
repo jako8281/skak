@@ -18,7 +18,7 @@
   { "name": "5A Roberta", "rating": 969 },
   { "name": "5A Sander", "rating": 1053 },
   { "name": "5A Sarah", "rating": 1017 },
-  { "name": "5A Walter", "rating": 1060 },
+  { "name": "5A Walter", "rating": 1072 },
 
   { "name": "5B Benjamin", "rating": 1030 },
   { "name": "5B Bjørn", "rating": 971 },
@@ -32,10 +32,10 @@
   { "name": "5B Nick", "rating": 985 },
   { "name": "5B Oskar", "rating": 1006 },
 
-  { "name": "6A Agathe", "rating": 973 },
+  { "name": "6A Agathe", "rating": 947 },
   { "name": "6A Emilie", "rating": 984 },
   { "name": "6A Karl", "rating": 956 },
-  { "name": "6A Lauge", "rating": 1003 },
+  { "name": "6A Lauge", "rating": 1017 },
   { "name": "6A Mille", "rating": 1042 },
   { "name": "6A Noah", "rating": 1051 },
   { "name": "6A Sebastian V", "rating": 1026 },
