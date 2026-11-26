@@ -1,4 +1,23 @@
 [
+  { "name": "1A Per", "rating": 739 },
+  { "name": "1A Viggo", "rating": 738 },
+  { "name": "1A Johanne", "rating": 737 },
+  { "name": "1A Rose", "rating": 734 },
+  { "name": "1A Karl Emil", "rating": 721 },
+  { "name": "1A Frederik", "rating": 720 },
+  { "name": "1A Jamie", "rating": 718 },
+  { "name": "1A Lilly", "rating": 700 },
+  { "name": "1A Maja", "rating": 700 },
+  { "name": "1A Olivia", "rating": 683 },
+  { "name": "1A Asger", "rating": 682 },
+  { "name": "1A Arthur", "rating": 680 },
+  { "name": "1A Karla", "rating": 700 },
+  { "name": "1A Elisa", "rating": 680 },
+  { "name": "1A Otto", "rating": 679 },
+  { "name": "1A Britta", "rating": 662 },
+  { "name": "1A Johannes", "rating": 661 },
+  { "name": "1A Milo", "rating": 646 }
+  
   { "name": "4A Abby", "rating": 943 },
   { "name": "4A Adrian", "rating": 1021 },
   { "name": "4A Aksel", "rating": 987 },
